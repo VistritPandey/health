@@ -12,12 +12,22 @@ function PatientFeedback() {
     const feedbackCollection = collection(db, 'patientFeedback');
 
     try {
-      await addDoc(feedbackCollection, {
+      // Save feedback with a unique ID
+      const feedbackId = (Date.now() + Math.floor(Math.random() * 1000)).toString();
+
+      const docRef = await addDoc(feedbackCollection, {
         roomNumber,
         doctorId,
         feedback,
+        feedbackId,
         timestamp: Date.now(),
       });
+
+      // Get the unique ID (document ID) of the saved feedback
+
+      // Include the feedback ID in the state or use it as needed
+      console.log('Feedback ID:', feedbackId);
+
       setRoomNumber('');
       setDoctorId('');
       setFeedback('');
