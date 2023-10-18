@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import {app} from './firebase';
+import {app, logout, auth} from './firebase';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
 
 function DoctorDashboard() {
   const [doctorId, setDoctorId] = useState('');
@@ -24,9 +26,45 @@ function DoctorDashboard() {
     setFeedbackData(feedbackArray);
   };
 
+  const [user, loading, error] = useAuthState(auth);
+  const [name, setName] = useState("");
+  const navigate = useNavigate();
+  const fetchUserName = async () => {
+    try {
+      const q = query(collection(db, "users"), where("uid", "==", user?.uid));
+      const doc = await getDocs(q);
+      const data = doc.docs[0].data();
+      setName(data.name);
+    } catch (err) {
+      console.error(err);
+      alert("An error occured while fetching user data");
+    }
+  };
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return navigate("/");
+    fetchUserName();
+  }, [user, loading]);
+
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Doctor Dashboard</h2>
+      <div className="dashboard__container">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xl font-semibold mb-2">Doctor Dashboard</p>
+            <p className="text-sm text-gray-600">
+              Logged in as: {name} ({user?.doctorId})
+            </p>
+          </div>
+          <button
+            onClick={() => logout()}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
       <input
         type="text"
         placeholder="Enter Doctor ID"
