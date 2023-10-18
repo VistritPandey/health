@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import app from './firebase';
+import {app} from './firebase';
 
 function DoctorDashboard() {
   const [doctorId, setDoctorId] = useState('');

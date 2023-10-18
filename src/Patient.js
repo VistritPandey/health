@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import app from './firebase';
+import {app} from './firebase';
 
 function PatientFeedback() {
   const [roomNumber, setRoomNumber] = useState('');
